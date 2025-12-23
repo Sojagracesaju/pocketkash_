@@ -10,6 +10,7 @@ import { OnboardingData, RoutineExpense, UserRole } from '@/types/user';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
 
 const TOTAL_STEPS = 5;
 
@@ -33,6 +34,7 @@ const initialData: OnboardingData = {
 const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { completeOnboarding } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(initialData);
   const [newRoutineExpense, setNewRoutineExpense] = useState({ name: '', amount: '' });
@@ -47,7 +49,8 @@ const OnboardingFlow = () => {
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep(prev => prev + 1);
     } else {
-      // Complete onboarding
+      // Complete onboarding and save to context
+      completeOnboarding(data);
       toast({
         title: 'Welcome to PocketKash!',
         description: 'Your profile is set up. Start tracking your expenses!',
